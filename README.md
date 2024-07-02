@@ -41,14 +41,14 @@ npm install --save @solana/web3.js
 
 ## 2- Clone Repo:
 ```console
-git clone https://github.com/0xmoei/sonic-tx/
+git clone https://github.com/meysamb95/sonic-tx2
 ```
 
 ## 3- Edit .env:
 * You have to set-up a second wallet address to send token to & your main wallet private key in .env file
 ```console
-cd sonic-tx
-nano .env
+cd sonic-tx2
+nano .env2
 
 # Copy and Paste this text in the editor
 PRIVATE_KEY = your Wallet Private key
