@@ -48,7 +48,7 @@ git clone https://github.com/meysamb95/sonic-tx2
 * You have to set-up a second wallet address to send token to & your main wallet private key in .env file
 ```console
 cd sonic-tx2
-nano .env2
+nano .env
 
 # Copy and Paste this text in the editor
 PRIVATE_KEY = your Wallet Private key
