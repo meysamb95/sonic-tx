@@ -2,7 +2,7 @@ const web3 = require('@solana/web3.js');
 const bs58 = require('bs58');
 const dotenv = require('dotenv');
 
-// Load environment variables from .env2 file
+// Load environment variables from .env file
 dotenv.config();
 
 const connection = new web3.Connection('https://devnet.sonic.game', 'confirmed');
@@ -11,7 +11,7 @@ const privateKey = process.env.PRIVATE_KEY;
 const recipientAddress = process.env.RECIPIENT_ADDRESS;
 
 if (!privateKey || !recipientAddress) {
-  console.error('Missing PRIVATE_KEY or RECIPIENT_ADDRESS in the .env2 file');
+  console.error('Missing PRIVATE_KEY or RECIPIENT_ADDRESS in the .env file');
   process.exit(1);
 }
 
