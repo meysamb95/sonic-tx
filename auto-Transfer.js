@@ -7,8 +7,8 @@ dotenv.config();
 
 const connection = new web3.Connection('https://devnet.sonic.game', 'confirmed');
 
-const privateKey = process.env2.PRIVATE_KEY;
-const recipientAddress = process.env2.RECIPIENT_ADDRESS;
+const privateKey = process.env.PRIVATE_KEY;
+const recipientAddress = process.env.RECIPIENT_ADDRESS;
 
 if (!privateKey || !recipientAddress) {
   console.error('Missing PRIVATE_KEY or RECIPIENT_ADDRESS in the .env2 file');
