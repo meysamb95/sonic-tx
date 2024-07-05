@@ -1,6 +1,7 @@
 const web3 = require('@solana/web3.js');
 const bs58 = require('bs58');
 const dotenv = require('dotenv');
+const readline = require('readline');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -26,38 +27,62 @@ const getRandomDelay = () => {
   return Math.floor(Math.random() * 6 + 15) * 1000;
 };
 
-const transferToRecipient = async () => {
-  try {
-    const balanceMainWallet = await connection.getBalance(fromWallet.publicKey);
-    const balanceLeft = balanceMainWallet - lamportsToSend;
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
-    if (balanceLeft < 0) {
-      console.log('Not enough balance to transfer');
-    } else {
-      console.log('Wallet A balance:', balanceMainWallet);
+rl.question('How many transactions do you want to execute? ', (answer) => {
+  const numTransactions = parseInt(answer, 10);
 
-      const transaction = new web3.Transaction().add(
-        web3.SystemProgram.transfer({
-          fromPubkey: fromWallet.publicKey,
-          toPubkey: recipientPublicKey,
-          lamports: lamportsToSend,
-        })
-      );
+  if (isNaN(numTransactions) || numTransactions <= 0) {
+    console.error('Please enter a valid number of transactions.');
+    rl.close();
+    return;
+  }
 
-      const signature = await web3.sendAndConfirmTransaction(connection, transaction, [fromWallet]);
-      console.log('Transfer signature:', signature);
-
-      const balanceOfWalletB = await connection.getBalance(recipientPublicKey);
-      console.log('Wallet B balance:', balanceOfWalletB);
+  const transferToRecipient = async (count) => {
+    if (count <= 0) {
+      console.log('All transactions completed.');
+      rl.close();
+      return;
     }
 
-    const delay = getRandomDelay();
-    console.log(`Next transfer in ${delay / 1000} seconds`);
-    await new Promise((resolve) => setTimeout(resolve, delay));
-    transferToRecipient(); // Recursive call for continuous transfers
-  } catch (error) {
-    console.error('Error during transfer:', error.message);
-  }
-};
+    try {
+      const balanceMainWallet = await connection.getBalance(fromWallet.publicKey);
+      const balanceLeft = balanceMainWallet - lamportsToSend;
 
-transferToRecipient();
+      if (balanceLeft < 0) {
+        console.log('Not enough balance to transfer');
+        rl.close();
+        return;
+      } else {
+        console.log('Wallet A balance:', balanceMainWallet);
+
+        const transaction = new web3.Transaction().add(
+          web3.SystemProgram.transfer({
+            fromPubkey: fromWallet.publicKey,
+            toPubkey: recipientPublicKey,
+            lamports: lamportsToSend,
+          })
+        );
+
+        const signature = await web3.sendAndConfirmTransaction(connection, transaction, [fromWallet]);
+        console.log('Transfer signature:', signature);
+
+        const balanceOfWalletB = await connection.getBalance(recipientPublicKey);
+        console.log('Wallet B balance:', balanceOfWalletB);
+      }
+
+      const delay = getRandomDelay();
+      console.log(`Next transfer in ${delay / 1000} seconds`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      transferToRecipient(count - 1); // Recursive call for continuous transfers
+    } catch (error) {
+      console.error('Error during transfer:', error.message);
+      rl.close();
+    }
+  };
+
+  transferToRecipient(numTransactions);
+});
